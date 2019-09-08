@@ -10,5 +10,10 @@
   "license": "ISC",
   "devDependencies": {
     "eslint-config-google": "^0.9.1"
+  },
+  "dependencies": {
+    "@mathigon/fermat": "^0.2.7",
+    "@turf/turf": "^5.1.6",
+    "polygon-centroid": "^1.1.0"
   }
 }
