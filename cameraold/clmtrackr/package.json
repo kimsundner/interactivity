@@ -1,0 +1,19 @@
+{
+  "name": "camera",
+  "version": "1.0.0",
+  "description": "Demo that shows how to use events: `pointerdown`, `pointerdown`. The colour of an element changes accordingly.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint-config-google": "^0.9.1"
+  },
+  "dependencies": {
+    "@mathigon/fermat": "^0.2.7",
+    "@turf/turf": "^5.1.6",
+    "polygon-centroid": "^1.1.0"
+  }
+}
