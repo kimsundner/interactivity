@@ -3,6 +3,7 @@ const canvasEl = document.getElementById('canvas');
 const resultsEl = document.getElementById('results');
 
 let model = null;
+let objects, people;
 document.getElementById('btnFreeze').addEventListener('click', evt => {
   if (cameraEl.paused) {
     cameraEl.play();
@@ -37,9 +38,31 @@ function process() {
   // Run through model
   model.detect(canvasEl).then(predictions => {
     //console.log('Predictions: ', predictions);
+    
+    //Number of objects present
+    objects = predictions.length;
 
+    //nuber of people present
+    predictions.forEach(p => {
+      if(p.class === 'person'){
+        people += 1;
+      }
+    });
+
+    //Darken screen depending on number of people
+    // if there are 10+ people then the screen becomes black
+    c.fillStyle = "rgba(0,0,0," + (objects/10) + ")";
+    c.fillRect(0,0,cameraEl.videoWidth,cameraEl.videoHeight);
+
+    //display debug text
+    c.fillStyle = "#000000";
+    c.fillText("obejcts: " + objects + ", " + 
+              "people :" + people,20, 20);
     // As a demo, draw each prediction
-    predictions.forEach(p => drawPrediction(p, c));
+    
+    // predictions.forEach(p => {
+    //   drawPrediction(p, c);
+    // });
   });
 
 
@@ -49,6 +72,9 @@ function process() {
     return;
   }
   window.requestAnimationFrame(process);
+
+  //reset
+  people = 0;
 }
 
 /**
