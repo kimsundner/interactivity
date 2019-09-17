@@ -70,7 +70,7 @@ function getTriCentroid(x, y, z) {
     xCent = (x[0] + y[0] + z[0]) / 3;
     yCent = (x[1] + y[1] + z[1]) / 3;
 
-    return new Array(xCent, yCent);
+    return [xCent, yCent];
 }
 
 function getDist(x1, y1, x2, y2) {
