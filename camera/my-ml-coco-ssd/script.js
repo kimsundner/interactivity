@@ -95,7 +95,7 @@ function drawPrediction(prediction, canvasContext) {
     // Get bounding box coordinates
     var [x1, y1, x2, y2] = prediction.bbox;
 
-    let cntr = [(x1 + (x1 + x2)) / 2, (y1 + (y1 + y2)) / 2];
+    let cntr = [(x1 + (x1 + x2)) / 2, (y1 + (y1 + y2)) / 2]; // working
 
 
     // console.log(x1, y1, x2, y2);
@@ -107,7 +107,7 @@ function drawPrediction(prediction, canvasContext) {
     // canvasContext.strokeRect(x1, y1, x2, y2);
     canvasContext.beginPath();
     canvasContext.strokeStyle = 'white';
-    canvasContext.arc(cntr[0], cntr[1], 15, 0, 2 * Math.PI);
+    canvasContext.arc(cntr[0], cntr[1], 50, 0, 2 * Math.PI);
     canvasContext.stroke();
 
     // Create a debug string showing prediction
