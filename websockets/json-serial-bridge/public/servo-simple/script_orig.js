@@ -25,15 +25,6 @@ function onPointerMove(evt) {
 
     if (relativeX < 0) relativeX = 0;
     if (relativeX > 1) relativeX = 1;
-
-    // console.log('pure X coordinate: ', x);
-
-    // console.log('X is devided by the offsetWidht: ', evt.target.offsetWidth);
-
-    // console.log('Which is: ', relativeX);
-
-    // console.log('which multiplied with 180 is: ', 180 * relativeX);
-
     write(0, 180 * relativeX, 0);
 }
 
@@ -47,7 +38,7 @@ function write(servo, position, durationMs) {
     if (position < 0) throw new Error('Must be greater than zero');
     if (position > 180) throw new Error('Must be equal or less than 180');
 
-    // console.log('Write ' + servo + ' = ' + position);
+    console.log('Write ' + servo + ' = ' + position);
     socket.send(JSON.stringify({
         cmd: CMD_WRITE,
         servo: servo,
@@ -57,7 +48,7 @@ function write(servo, position, durationMs) {
 }
 
 function detach(servo) {
-    // console.log('Detach ' + servo);
+    console.log('Detach ' + servo);
     socket.send(JSON.stringify({
         cmd: CMD_DETACH,
         servo: servo,
@@ -69,7 +60,7 @@ function detach(servo) {
 function writeMicroseconds(servo, us) {
     if (us < 0) throw new Error('Must be greater than zero');
 
-    // console.log('Write uS: ' + us);
+    console.log('Write uS: ' + us);
     socket.send(JSON.stringify({
         cmd: CMD_WRITE_US,
         servo: servo,
@@ -84,50 +75,16 @@ function init() {
         detach(0);
     });
 
-    // document.getElementById('thing').addEventListener('pointermove', onPointerMove);
-    timer();
+    document.getElementById('thing').addEventListener('pointermove', onPointerMove);
     document.getElementById('thing').addEventListener('pointerleave', onPointerLeave);
 
     socket = new ReconnectingWebsocket('ws://' + location.host + '/serial');
     socket.addEventListener('message', evt => {
-        // console.log(evt.data);
+        console.log(evt.data);
     });
 
     socket.addEventListener('open', () => {
         console.log('Connected to json-serial-bridge 👍');
         detach(0);
     });
-}
-
-const timerEnd = 10000;
-
-function timer() {
-    let origin = 0;
-
-    let timeleft;
-
-    let relativeTime;
-
-    let seconds = 1000;
-
-    setInterval(() => {
-
-        timeleft = timerEnd - origin;
-
-
-        if (relativeTime >= 1) seconds = -1000;
-        if (relativeTime <= 0) seconds = 1000;
-
-        relativeTime = origin / timerEnd;
-
-        if (relativeTime > 1) relativeTime = 1;
-        if (relativeTime < 0) relativeTime = 0;
-
-        console.log('timer: ', relativeTime);
-
-        origin += seconds;
-
-        write(0, 90 * relativeTime, 0);
-        console.log('speed: ', 180 * relativeTime);
-    }, 1000);
 }
