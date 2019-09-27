@@ -114,19 +114,24 @@ function timer() {
 
         timeleft = timerEnd - origin;
 
-
+        // chaning between subtracting seconds and adding seconds
         if (relativeTime >= 1) seconds = -1000;
         if (relativeTime <= 0) seconds = 1000;
 
+        //get a number between 0 -> 1
         relativeTime = origin / timerEnd;
 
+
+        // clamp som that they never go beyon 0 and 1
         if (relativeTime > 1) relativeTime = 1;
         if (relativeTime < 0) relativeTime = 0;
 
         console.log('timer: ', relativeTime);
 
+        //add or subtract seconds from earlier
         origin += seconds;
 
+        //send to arduiono 0 -> 90
         write(0, 90 * relativeTime, 0);
         console.log('speed: ', 180 * relativeTime);
     }, 1000);
