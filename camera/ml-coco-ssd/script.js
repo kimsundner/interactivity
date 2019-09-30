@@ -57,7 +57,7 @@ function process() {
         //Number of objects present
         objects = predictions.length;
 
-        //nuber of people present
+        //number of people present + remove pople from object collection
         predictions.forEach(p => {
             if (p.class === 'person') {
                 people += 1;
