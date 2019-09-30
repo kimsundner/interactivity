@@ -1,0 +1,5 @@
+{
+    "port": "COM3",
+    "board": "arduino:avr:micro",
+    "sketch": "servos\\arduino-servo-control\\servo-control.ino"
+}

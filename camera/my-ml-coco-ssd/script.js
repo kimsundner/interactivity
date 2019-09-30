@@ -3,21 +3,6 @@ const canvasEl = document.getElementById('canvas');
 const resultsEl = document.getElementById('results');
 
 let model = null;
-let objects, people;
-
-// where to find flash SWFs, if needed...
-// soundManager.url = '/soundmanager2';
-
-soundManager.onready(async function() {
-    soundManager.createSound({
-        id: 'mySound',
-        url: 'sound.mp3'
-    });
-
-    //soundManager.setVolume(0);
-    soundManager.play('mySound');
-});
-
 document.getElementById('btnFreeze').addEventListener('click', evt => {
     if (cameraEl.paused) {
         cameraEl.play();
@@ -25,7 +10,6 @@ document.getElementById('btnFreeze').addEventListener('click', evt => {
         cameraEl.pause();
     }
 });
-
 
 console.log('Loading coco-ssd model')
 cocoSsd.load().then(m => {
@@ -49,49 +33,38 @@ function process() {
     // Draw frame to canvas
     var c = canvasEl.getContext('2d');
     c.drawImage(cameraEl, 0, 0, cameraEl.videoWidth, cameraEl.videoHeight);
-
+    let p1cntr, p2cntr, dist, centerPoint;
     // Run through model
     model.detect(canvasEl).then(predictions => {
         //console.log('Predictions: ', predictions);
 
-        //Number of objects present
-        objects = predictions.length;
-
-        //number of people present + remove pople from object collection
-        predictions.forEach(p => {
-            if (p.class === 'person') {
-                people += 1;
-                objects -= 1;
-            }
-        });
-
-
-        //people variable & object varieble = amount
-
-
-        // ...and play it
-        soundManager.setVolume(10 * people);
-
-        //Darken screen depending on number of people
-        // if there are 10+ people then the screen becomes black
-        c.fillStyle = "rgba(0, 255, 0," + (objects / 10) + ")";
-        c.fillRect(0, 0, cameraEl.videoWidth, cameraEl.videoHeight);
-        // console.log('colour', c.fillStyle);
-
-
-        //compete with the amount of objects by  adding white transparency to the canvas
-        c.fillStyle = "rgba(255, 0, 0," + (people / 10) + ")";
-        c.fillRect(0, 0, cameraEl.videoWidth, cameraEl.videoHeight);
-
-
-        //display debug text
-        c.fillStyle = "#ffffff";
-        c.fillText("obejcts: " + objects + ", " +
-            "people :" + people, 20, 20);
         // As a demo, draw each prediction
+        predictions.forEach((p, i) => {
+            drawPrediction(p, c)
 
-        predictions.forEach(p => {
-            drawPrediction(p, c);
+            p1cntr = [(p.bbox[0] + (p.bbox[0] + p.bbox[2])) / 2, (p.bbox[1] + (p.bbox[1] + p.bbox[3])) / 2];
+
+            console.log(p.bbox.length);
+
+            predictions.splice(0, i).forEach((p2, j) => {
+
+
+                p2cntr = [(p2.bbox[0] + (p2.bbox[0] + p2.bbox[2])) / 2, (p2.bbox[1] + (p2.bbox[1] + p2.bbox[3])) / 2];
+
+
+                dist = getDist(p1cntr[0], p1cntr[1], p2cntr[0], p2cntr[1]);
+
+                if (dist > 50) {
+                    centerPoint = [(p1cntr[0] + p2cntr[0]) / 2, (p1cntr[1] + p2cntr[1]) / 2];
+
+                    c.beginPath();
+                    c.strokeStyle = 'black';
+                    c.arc(centerPoint[0], centerPoint[1], dist + 20, 0, 2 * Math.PI);
+                    c.stroke();
+
+                }
+            });
+
         });
     });
 
@@ -102,27 +75,40 @@ function process() {
         return;
     }
     window.requestAnimationFrame(process);
+}
 
-    //reset
-    people = 0;
+function getDist(x1, y1, x2, y2) {
+    let a = x1 - x2;
+    let b = y1 - y2;
+
+    let c = Math.sqrt(a * a + b * b);
+    return c;
 }
 
 /**
 Prediction consists of:
  class (string)
  score (0..1)
- bbox[x1,y1,x2,y2]
+ bbox[x1,y1,x2,y2] //x2 and y2 are the width add them xith the x1 and y1 coordinates to get the real x2 and y2 coordinates
 */
 function drawPrediction(prediction, canvasContext) {
     // Get bounding box coordinates
     var [x1, y1, x2, y2] = prediction.bbox;
 
+    let cntr = [(x1 + (x1 + x2)) / 2, (y1 + (y1 + y2)) / 2]; // working
+
+
+    // console.log(x1, y1, x2, y2);
     // Draw a white and black offset rectangle around the prediction.
     // Two are used so that rectangle appears in dark or light images
-    canvasContext.strokeStyle = 'black';
-    canvasContext.strokeRect(x1 + 1, y1 + 1, x2 + 1, y2 + 1);
+    // canvasContext.strokeStyle = 'black';
+    // canvasContext.strokeRect(x1 + 1, y1 + 1, x2 + 1, y2 + 1);
+    // canvasContext.strokeStyle = 'white';
+    // canvasContext.strokeRect(x1, y1, x2, y2);
+    canvasContext.beginPath();
     canvasContext.strokeStyle = 'white';
-    canvasContext.strokeRect(x1, y1, x2, y2);
+    canvasContext.arc(cntr[0], cntr[1], 50, 0, 2 * Math.PI);
+    canvasContext.stroke();
 
     // Create a debug string showing prediction
     let msg = prediction.class + ' (' + Math.floor(prediction.score * 100) + ')';
