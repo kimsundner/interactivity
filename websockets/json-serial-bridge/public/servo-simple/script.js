@@ -99,20 +99,16 @@ function init() {
     });
 }
 
-const timerEnd = 10000;
+const timerEnd = 5000;
 
 function timer() {
     let origin = 0;
-
-    let timeleft;
 
     let relativeTime;
 
     let seconds = 1000;
 
     setInterval(() => {
-
-        timeleft = timerEnd - origin;
 
         // chaning between subtracting seconds and adding seconds
         if (relativeTime >= 1) seconds = -1000;
