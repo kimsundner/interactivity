@@ -1,0 +1,25 @@
+{
+  "name": "curveEditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mojs/curve-editor": "^1.5.0",
+    "mo-js": "^0.288.2",
+    "mojs": "^0.2.0",
+    "svg-path-parser": "^1.1.0",
+    "svg-path-properties": "^0.5.2",
+    "svg-points": "^6.0.1",
+    "svg.js": "^2.7.1",
+    "webpack": "^4.41.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.3.9"
+  }
+}
