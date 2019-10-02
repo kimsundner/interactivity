@@ -14,67 +14,38 @@ var properties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100");
 // var parts = properties.getParts(); 
 
 const mojsCurve = new MojsCurveEditor({
-  name: 'bounce curve'
+    name: 'bounce curve'
 });
 
 
 setTimeout(() => {
-  init();
+    init();
 }, 250);
 
-function init(){
-  if (mojsCurve._prevPath) console.log('Path detected', mojsCurve._prevPath);
-  else console.log('Path was not collected');
-  
-  console.log(mojsCurve);
-  properties = path.svgPathProperties(mojsCurve._prevPath);
-  let obj = ParseSVG(mojsCurve._prevPath);
-  
-  console.log('y of 0:',findY(mojsCurve._prevPath, 0));
-  let length = properties.getTotalLength();
-  console.log(length);
+function init() {
+    if (mojsCurve._prevPath) console.log('Path detected', mojsCurve._prevPath);
+    else console.log('Path was not collected');
 
-  
+    let xPoints = [];
+    let yPoints = [];
 
-  // breaksthe page
-  // for(let i = 0; i < length; i++){
-  //   if (!findY(mojsCurve._prevPath, i)) console.log(i+' : '+findY(mojsCurve._prevPath, i));
-  //   else break;
-  // }
+    properties = path.svgPathProperties(mojsCurve._prevPath);
 
-  obj.forEach(e => {
-    console.log('y: ', Math.floor(e.y));
-  });
+    let cOneLength = properties.getTotalLength();
 
-  console.log(mojsCurve._prevPath);
-}
-
-
-// https://stackoverflow.com/a/47935325
-function findY(path, x) {
-  var pathLength = properties.getTotalLength();
-  var start = 0;
-  var end = pathLength;
-  var target = (start + end) / 2;
-
-  // Ensure that x is within the range of the path
-  x = Math.max(x, properties.getPointAtLength(0).x);
-  x = Math.min(x, properties.getPointAtLength(pathLength).x);
-
-  // Walk along the path using binary search 
-  // to locate the point with the supplied x value
-  while (target >= start && target <= pathLength) {
-    var pos = properties.getPointAtLength(target);
-
-    // use a threshold instead of strict equality 
-    // to handle javascript floating point precision
-    if (Math.abs(pos.x - x) < 0.001) {
-      return pos.y;
-    } else if (pos.x > x) {
-      end = target;
-    } else {
-      start = target;
+    for (let i = 0; i < cOneLength; i++) {
+        if (!xPoints.includes(Math.round(properties.getPointAtLength(i).x))) {
+            xPoints.push(Math.round(properties.getPointAtLength(i).x));
+            yPoints.push(Math.round(properties.getPointAtLength(i).y));
+        }
     }
-    target = (start + end) / 2;
-  }
+    if (xPoints) {
+        console.log('length of xPoints: ', xPoints.length);
+        console.log('length of yPoints: ', yPoints.length);
+
+        for (let i = 0; i < xPoints.length; i++) {
+            console.log(xPoints[i] + ' : ' + yPoints[i]);
+        }
+
+    } else console.log('missing data');
 }
