@@ -2,10 +2,11 @@ import MojsCurveEditor from '@mojs/curve-editor';
 import Mojs from 'mo-js';
 import ParseSVG from 'svg-path-parser';
 import { toPoints } from 'svg-points';
-var path = require("svg-path-properties");
+let path = require("svg-path-properties");
 
 
-var properties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100");
+let leadProperties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100");
+let followProperties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100");
 
 // var length = properties.getTotalLength();
 // var point = properties.getPointAtLength(200);
@@ -13,8 +14,18 @@ var properties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100");
 // var allProperties = properties.getPropertiesAtLength(200);
 // var parts = properties.getParts(); 
 
-const mojsCurve = new MojsCurveEditor({
-    name: 'bounce curve'
+const lead = new MojsCurveEditor({
+    name: 'lead',
+    isSaveState: true,
+    onChange: function (path) {},
+    startPath: 'M0, 100 L100, 0'
+});
+
+const follow = new MojsCurveEditor({
+    name: 'follow',
+    isSaveState: true,
+    onChange: function (path) {},
+    startPath: 'M0, 0 L100, 100'
 });
 
 
@@ -23,28 +34,50 @@ setTimeout(() => {
 }, 250);
 
 function init() {
-    if (mojsCurve._prevPath) console.log('Path detected', mojsCurve._prevPath);
+    if (lead._prevPath && follow._prevPath) console.log('Path detected: ' + lead._prevPath +',\n'+
+                                                        'and: ' + follow._prevPath);
     else console.log('Path was not collected');
 
-    let xPoints = [];
-    let yPoints = [];
+    console.log(lead);
 
-    properties = path.svgPathProperties(mojsCurve._prevPath);
+    let leadXPoints = [];
+    let leadYPoints = [];
 
-    let cOneLength = properties.getTotalLength();
+    let followXPoints = [];
+    let followYPoints = [];
 
-    for (let i = 0; i < cOneLength; i++) {
-        if (!xPoints.includes(Math.round(properties.getPointAtLength(i).x))) {
-            xPoints.push(Math.round(properties.getPointAtLength(i).x));
-            yPoints.push(Math.round(properties.getPointAtLength(i).y));
+    let fullXArr = [];
+    let fullYArr = [];
+
+    leadProperties = path.svgPathProperties(lead._prevPath);
+    followProperties = path.svgPathProperties(lead._prevPath);
+
+    let leadLength = leadProperties.getTotalLength();
+    let followLength = leadProperties.getTotalLength();
+
+    for (let i = 0; i < leadLength; i++) { 
+        if (!leadXPoints.includes(Math.round(leadProperties.getPointAtLength(i).x))) {
+            leadXPoints.push(Math.round(leadProperties.getPointAtLength(i).x));
+            leadYPoints.push(Math.round(leadProperties.getPointAtLength(i).y));
         }
     }
-    if (xPoints) {
-        console.log('length of xPoints: ', xPoints.length);
-        console.log('length of yPoints: ', yPoints.length);
+    console.log('\n\n\n');
+    for (let i = 100; i < followLength + 100; i++) {
+        if (!followXPoints.includes(Math.round(followProperties.getPointAtLength(i).x))) {
+            followXPoints.push(Math.round(followProperties.getPointAtLength(i).x));
+            followYPoints.push(Math.round(followProperties.getPointAtLength(i).y));
+        }
+    }
 
-        for (let i = 0; i < xPoints.length; i++) {
-            console.log(xPoints[i] + ' : ' + yPoints[i]);
+    fullXArr = leadXPoints.concat(leadXPoints);
+    fullYArr = leadYPoints.concat(leadYPoints);
+    
+    if (fullXArr) {
+        console.log('length of xPoints: ', fullXArr.length);
+        console.log('length of yPoints: ', fullYArr.length);
+
+        for (let i = 0; i < fullXArr.length; i++) {
+            console.log(i + ' : ' + fullXArr[i] + ' : ' + fullYArr[i]);
         }
 
     } else console.log('missing data');
