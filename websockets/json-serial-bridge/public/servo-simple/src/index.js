@@ -31,6 +31,7 @@ const follow = new MojsCurveEditor({
     onChange: function(path) {},
     startPath: 'M0, 0 L100, 100'
 });
+
 // Set up event handlers and websocket
 init();
 
@@ -110,11 +111,12 @@ function init() {
         detach(0);
     });
 
+
+
     // document.getElementById('thing').addEventListener('pointermove', onPointerMove);
     // timer();
     // document.getElementById('thing').addEventListener('pointerleave', onPointerLeave);
 
-    sendCurve();
 
     socket = new ReconnectingWebsocket('ws://' + location.host + '/serial');
     socket.addEventListener('message', evt => {
@@ -128,7 +130,8 @@ function init() {
 
     setTimeout(() => {
         initCurves();
-    }, 10);
+        sendCurve();
+    }, 100);
 }
 
 
@@ -183,8 +186,8 @@ function sendCurve() {
 
     setInterval(() => {
         if (fullYArr) {
-            relativePos = i / fullYArr.length;
-            console.log('pos', fullYArr);
+            relativePos = fullYArr[i]/fullYArr.length;
+            // console.log('pos', fullYArr);
 
             if (relativePos >= 1) direction = -1;
             if (relativePos <= 0) direction = 1;
@@ -194,10 +197,12 @@ function sendCurve() {
             if (rotSpeed >= maxSpeed) rotSpeed = maxSpeed;
             if (rotSpeed <= minSpeed) rotSpeed = minSpeed;
 
-            if (rotSpeed == NaN) {
-                rotSpeed = 0;
-            }
-            console.log('Rotspeed', rotSpeed);
+            console.log('\n');
+            // console.log('fullYArr', fullYArr);
+            // console.log('i', i);
+            // console.log('fullYArr.length', fullYArr.length);
+            // console.log('relativePos', relativePos);
+            console.log('rotSpeed', rotSpeed);
             //write(0, rotSpeed, 0);
 
             i = i + ((1 * direction) * speed);
@@ -237,19 +242,20 @@ function initCurves() {
         }
     }
     console.log('\n\n\n');
-    for (let i = 100; i < followLength + 100; i++) {
+    for (let i = 99; i < followLength + 99; i++) {
         if (!followXPoints.includes(Math.round(followProperties.getPointAtLength(i).x))) {
             followXPoints.push(Math.round(followProperties.getPointAtLength(i).x));
             followYPoints.push(Math.round(followProperties.getPointAtLength(i).y));
         }
     }
 
-    fullXArr = leadXPoints.concat(leadXPoints);
-    fullYArr = leadYPoints.concat(leadYPoints);
+    fullXArr = leadXPoints.concat(followXPoints);
+    fullYArr = leadYPoints.concat(followYPoints);
 
     if (fullXArr) {
-        // console.log('length of xPoints: ', fullXArr.length);
-        console.log('length of yPoints: ', fullYArr.length);
+        // console.log('length of xPoints: ', fullXArr);
+        console.log('length of yPoints: ', fullYArr);
+        console.log('asdasd of yPoints: ', followYPoints);
 
         // for (let i = 0; i < fullXArr.length; i++) {
         //     console.log(i + ' : ' + fullXArr[i] + ' : ' + fullYArr[i]);
