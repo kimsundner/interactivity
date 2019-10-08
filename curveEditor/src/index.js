@@ -17,14 +17,14 @@ let followProperties = path.svgPathProperties("M0,100 Q50,-50 100,100 T200,100")
 const lead = new MojsCurveEditor({
     name: 'lead',
     isSaveState: true,
-    onChange: function (path) {},
+    onChange: function(path) {},
     startPath: 'M0, 100 L100, 0'
 });
 
 const follow = new MojsCurveEditor({
     name: 'follow',
     isSaveState: true,
-    onChange: function (path) {},
+    onChange: function(path) {},
     startPath: 'M0, 0 L100, 100'
 });
 
@@ -34,8 +34,8 @@ setTimeout(() => {
 }, 250);
 
 function init() {
-    if (lead._prevPath && follow._prevPath) console.log('Path detected: ' + lead._prevPath +',\n'+
-                                                        'and: ' + follow._prevPath);
+    if (lead._prevPath && follow._prevPath) console.log('Path detected: ' + lead._prevPath + ',\n' +
+        'and: ' + follow._prevPath);
     else console.log('Path was not collected');
 
     console.log(lead);
@@ -55,7 +55,7 @@ function init() {
     let leadLength = leadProperties.getTotalLength();
     let followLength = leadProperties.getTotalLength();
 
-    for (let i = 0; i < leadLength; i++) { 
+    for (let i = 0; i < leadLength; i++) {
         if (!leadXPoints.includes(Math.round(leadProperties.getPointAtLength(i).x))) {
             leadXPoints.push(Math.round(leadProperties.getPointAtLength(i).x));
             leadYPoints.push(Math.round(leadProperties.getPointAtLength(i).y));
@@ -69,9 +69,9 @@ function init() {
         }
     }
 
-    fullXArr = leadXPoints.concat(leadXPoints);
-    fullYArr = leadYPoints.concat(leadYPoints);
-    
+    fullXArr = leadXPoints.concat(followXPoints);
+    fullYArr = leadYPoints.concat(followYPoints);
+
     if (fullXArr) {
         console.log('length of xPoints: ', fullXArr.length);
         console.log('length of yPoints: ', fullYArr.length);
