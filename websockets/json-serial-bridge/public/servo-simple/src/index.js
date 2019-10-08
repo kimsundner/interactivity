@@ -21,14 +21,14 @@ const timerEnd = 5000;
 const lead = new MojsCurveEditor({
     name: 'lead',
     isSaveState: true,
-    onChange: function (path) {},
+    onChange: function(path) {},
     startPath: 'M0, 100 L100, 0'
 });
 
 const follow = new MojsCurveEditor({
     name: 'follow',
     isSaveState: true,
-    onChange: function (path) {},
+    onChange: function(path) {},
     startPath: 'M0, 0 L100, 100'
 });
 // Set up event handlers and websocket
@@ -128,15 +128,15 @@ function init() {
 
     setTimeout(() => {
         initCurves();
-    }, 250);
+    }, 10);
 }
 
 
 function timer() {
     let origin = 0;
-    
+
     let relativeTime;
-    
+
     let seconds = 1000;
 
     setInterval(() => {
@@ -144,20 +144,20 @@ function timer() {
         // chaning between subtracting seconds and adding seconds
         if (relativeTime >= 1) seconds = -1000;
         if (relativeTime <= 0) seconds = 1000;
-        
+
         //get a number between 0 -> 1
         relativeTime = origin / timerEnd;
-        
-        
+
+
         // clamp som that they never go beyon 0 and 1
         if (relativeTime > 1) relativeTime = 1;
         if (relativeTime < 0) relativeTime = 0;
-        
+
         console.log('timer: ', relativeTime);
-        
+
         //add or subtract seconds from earlier
         origin += seconds;
-        
+
         //send to arduiono 0 -> 90
         write(0, 90 * relativeTime, 0);
         console.log('speed: ', 180 * relativeTime);
@@ -172,7 +172,7 @@ function timer() {
 // var parts = properties.getParts(); 
 
 
-function sendCurve(){
+function sendCurve() {
     let i = 0;
     let direction = 1;
     let relativePos;
@@ -182,32 +182,35 @@ function sendCurve(){
     const minSpeed = 0;
 
     setInterval(() => {
-        if(fullYArr){
+        if (fullYArr) {
             relativePos = i / fullYArr.length;
-            
-            if(relativePos >= 1) direction = -1;
-            if(relativePos <= 0) direction = 1;
-            
+            console.log('pos', fullYArr);
+
+            if (relativePos >= 1) direction = -1;
+            if (relativePos <= 0) direction = 1;
+
             rotSpeed = maxSpeed * relativePos;
 
             if (rotSpeed >= maxSpeed) rotSpeed = maxSpeed;
             if (rotSpeed <= minSpeed) rotSpeed = minSpeed;
 
-            console.log(rotSpeed);
+            if (rotSpeed == NaN) {
+                rotSpeed = 0;
+            }
+            console.log('Rotspeed', rotSpeed);
+            //write(0, rotSpeed, 0);
 
-            write(0, rotSpeed, 0);
-            
-            i = i + ((1*direction) * speed);
-        }else console.warn('no points');
+            i = i + ((1 * direction) * speed);
+        } else console.warn('no points');
     }, 1000);
-    
+
 }
 
 
 
 function initCurves() {
-    if (lead._prevPath && follow._prevPath) console.log('Path detected: ' + lead._prevPath +',\n'+
-                                                        'and: ' + follow._prevPath);
+    if (lead._prevPath && follow._prevPath) console.log('Path detected: ' + lead._prevPath + ',\n' +
+        'and: ' + follow._prevPath);
     else console.log('Path was not collected');
 
     console.log(lead);
@@ -227,7 +230,7 @@ function initCurves() {
     let leadLength = leadProperties.getTotalLength();
     let followLength = leadProperties.getTotalLength();
 
-    for (let i = 0; i < leadLength; i++) { 
+    for (let i = 0; i < leadLength; i++) {
         if (!leadXPoints.includes(Math.round(leadProperties.getPointAtLength(i).x))) {
             leadXPoints.push(Math.round(leadProperties.getPointAtLength(i).x));
             leadYPoints.push(Math.round(leadProperties.getPointAtLength(i).y));
@@ -243,7 +246,7 @@ function initCurves() {
 
     fullXArr = leadXPoints.concat(leadXPoints);
     fullYArr = leadYPoints.concat(leadYPoints);
-    
+
     if (fullXArr) {
         // console.log('length of xPoints: ', fullXArr.length);
         console.log('length of yPoints: ', fullYArr.length);
