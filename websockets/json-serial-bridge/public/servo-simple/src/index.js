@@ -129,6 +129,9 @@ function sendCurve() {
             //send data
             write(0, rotSpeed, 0);
 
+            write(1, rotSpeed, 0);
+            write(2, rotSpeed, 0);
+
 
             //Change direction of increment and decrement
             if (i >= leadYPoints.length - 1) direction = -1;
@@ -140,7 +143,7 @@ function sendCurve() {
 
         }
         console.log('\n'); //space
-    }, 100);
+    }, 1000);
 }
 
 // function sendCurve() {

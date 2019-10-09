@@ -7,11 +7,11 @@ const byte CMD_READ = 2;
 const byte CMD_DETACH = 3;
 
 // How many servos are we using? (make sure servoPins gets updated)
-#define SERVO_COUNT 2
+#define SERVO_COUNT 3
 Servo servos[SERVO_COUNT];
 
 // Set control pin numbers here
-int servoPins[SERVO_COUNT] = { A0, A1};
+int servoPins[SERVO_COUNT] = {A0, A1, A2};
 
 void setup()  {
  Serial.begin(115200);
